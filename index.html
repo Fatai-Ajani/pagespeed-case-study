@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PageSpeed Case Study — 43→91 — Fatai A.</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f8f9fa;
+    --surface2: #f0f2f5;
+    --border: #e5e7eb;
+    --text: #111827;
+    --muted: #6b7280;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --red: #dc2626;
+    --red-bg: #fee2e2;
+    --yellow: #d97706;
+    --yellow-bg: #fef3c7;
+    --blue: #2563eb;
+    --blue-bg: #dbeafe;
+    --accent: #0ea5e9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: white;
+    padding: 80px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(14,165,233,0.15), transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-label::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+  .hero-title { font-size: clamp(36px, 5vw, 64px); font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
+  .hero-title span { color: var(--accent); }
+  .hero-sub { color: rgba(255,255,255,0.6); font-size: 16px; max-width: 560px; line-height: 1.7; margin-bottom: 48px; }
+
+  .score-compare {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .score-box {
+    text-align: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 32px 48px;
+  }
+  .score-num {
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .score-num.before { color: #ef4444; }
+  .score-num.after { color: #22c55e; }
+  .score-tag { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+
+  .score-arrow {
+    font-size: 48px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .score-change {
+    background: rgba(34,197,94,0.15);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 12px;
+    padding: 20px 28px;
+    text-align: center;
+  }
+  .change-num { font-size: 40px; font-weight: 700; color: #22c55e; margin-bottom: 4px; }
+  .change-label { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+  /* Container */
+  .container { max-width: 1000px; margin: 0 auto; padding: 64px 60px; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-item { position: relative; margin-bottom: 40px; }
+  .timeline-dot {
+    position: absolute;
+    left: -27px;
+    top: 4px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--blue);
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--blue);
+  }
+  .timeline-step {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .timeline-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+  .timeline-desc { color: var(--muted); line-height: 1.7; margin-bottom: 12px; }
+  .timeline-result {
+    background: var(--green-bg);
+    border-left: 3px solid var(--green);
+    padding: 10px 16px;
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 500;
+  }
+
+  /* Metrics comparison */
+  .metrics-section { margin-bottom: 64px; }
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .section-sub { color: var(--muted); margin-bottom: 32px; }
+
+  .metric-compare {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .metric-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: 180px 1fr 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .metric-name { font-weight: 500; font-size: 14px; }
+  .metric-bar-wrap { }
+  .metric-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .metric-bar-label .val { font-weight: 600; }
+  .metric-bar-label .val.red { color: var(--red); }
+  .metric-bar-label .val.green { color: var(--green); }
+  .bar { height: 8px; background: var(--border); border-radius: 100px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 100px; }
+  .bar-fill.red { background: var(--red); }
+  .bar-fill.green { background: var(--green); }
+
+  /* Techniques */
+  .techniques-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 64px;
+  }
+  .technique-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .technique-icon { font-size: 28px; margin-bottom: 12px; }
+  .technique-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+  .technique-desc { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
+  .technique-saving {
+    display: inline-block;
+    background: var(--green-bg);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+
+  /* Result box */
+  .result-box {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+    border-radius: 16px;
+    padding: 48px;
+    text-align: center;
+    margin-bottom: 64px;
+  }
+  .result-box-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .result-box-sub { color: rgba(255,255,255,0.5); margin-bottom: 40px; }
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .result-stat-num { font-size: 40px; font-weight: 700; color: #22c55e; margin-bottom: 4px; }
+  .result-stat-label { font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+
+  /* Code block */
+  .code-block {
+    background: #0f172a;
+    border-radius: 10px;
+    padding: 24px;
+    margin: 16px 0;
+    overflow-x: auto;
+  }
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #e2e8f0;
+    line-height: 1.8;
+  }
+  .code-comment { color: #64748b; }
+  .code-tag { color: #7dd3fc; }
+  .code-attr { color: #86efac; }
+  .code-val { color: #fca5a5; }
+
+  /* Footer */
+  .page-footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 24px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 768px) {
+    .hero { padding: 48px 24px; }
+    .container { padding: 40px 24px; }
+    .score-compare { flex-direction: column; align-items: flex-start; }
+    .score-box { padding: 24px 32px; }
+    .metric-row { grid-template-columns: 1fr; }
+    .techniques-grid { grid-template-columns: 1fr; }
+    .result-stats { grid-template-columns: 1fr 1fr; }
+    .page-footer { flex-direction: column; gap: 8px; padding: 20px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">Case Study — PageSpeed Optimization</div>
+  <h1 class="hero-title">From <span>43</span> to <span>91</span><br>PageSpeed Score</h1>
+  <p class="hero-sub">A complete performance overhaul of a Shopify fashion store that cut load time from 9.2 seconds to 1.8 seconds — and increased conversions by 89%.</p>
+  <div class="score-compare">
+    <div class="score-box">
+      <div class="score-num before">43</div>
+      <div class="score-tag">Before</div>
+    </div>
+    <div class="score-arrow">→</div>
+    <div class="score-box">
+      <div class="score-num after">91</div>
+      <div class="score-tag">After</div>
+    </div>
+    <div class="score-change">
+      <div class="change-num">+48pts</div>
+      <div class="change-label">Improvement</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Metrics comparison -->
+  <div class="metrics-section">
+    <div class="section-title">Before vs After — Key Metrics</div>
+    <div class="section-sub">Measured using Google PageSpeed Insights and Lighthouse audit</div>
+    <div class="metric-compare">
+      <div class="metric-row">
+        <div class="metric-name">Page Load Time</div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar-label"><span>Before</span><span class="val red">9.2s</span></div>
+          <div class="bar"><div class="bar-fill red" style="width:92%"></div></div>
+        </div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar-label"><span>After</span><span class="val green">1.8s</span></div>
+          <div class="bar"><div class="bar-fill green" style="width:18%"></div></div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-name">Total Page Size</div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar-label"><span>Before</span><span class="val red">18.4MB</span></div>
+          <div class="bar"><div class="bar-fill red" style="width:90%"></div></div>
+        </div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar-label"><span>After</span><span class="val green">1.9MB</span></div>
+          <div class="bar"><div class="bar-fill green" style="width:10%"></div></div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-name">Largest Contentful Paint</div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar-label"><span>Before</span><span class="val red">11.4s</span></div>
+          <div class="bar"><div class="bar-fill red" style="width:95%"></div></div>
+        </div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar-label"><span>After</span><span class="val green">1.9s</span></div>
+          <div class="bar"><div class="bar-fill green" style="width:16%"></div></div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-name">Conversion Rate</div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar-label"><span>Before</span><span class="val red">1.2%</span></div>
+          <div class="bar"><div class="bar-fill red" style="width:12%"></div></div>
+        </div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar-label"><span>After</span><span class="val green">2.7%</span></div>
+          <div class="bar"><div class="bar-fill green" style="width:27%"></div></div>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-name">Bounce Rate</div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar-label"><span>Before</span><span class="val red">74%</span></div>
+          <div class="bar"><div class="bar-fill red" style="width:74%"></div></div>
+        </div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar-label"><span>After</span><span class="val green">38%</span></div>
+          <div class="bar"><div class="bar-fill green" style="width:38%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What I Did -->
+  <div class="metrics-section">
+    <div class="section-title">What Was Done — Step by Step</div>
+    <div class="section-sub">7-day optimization sprint across performance, images, scripts, and UX</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-step">Day 1 — Diagnosis</div>
+        <div class="timeline-title">Full Lighthouse Audit + Root Cause Analysis</div>
+        <div class="timeline-desc">Ran Google Lighthouse, GTmetrix, and WebPageTest audits. Identified 6 render-blocking scripts, 18MB of uncompressed images, 3 unused app scripts loading on every page, and no lazy loading on any images.</div>
+        <div class="timeline-result">✓ Root causes identified — prioritized by load time impact</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-step">Day 2 — Image Optimization</div>
+        <div class="timeline-title">Converted 94 Images to WebP — Saved 16.5MB</div>
+        <div class="timeline-desc">Converted all PNG and JPEG images to WebP format using Shopify's built-in image transformation API. Added responsive srcset attributes so mobile devices load smaller images. Enabled lazy loading on all below-fold images.</div>
+        <div class="timeline-result">✓ Page weight dropped from 18.4MB to 1.9MB — load time cut by 4.1 seconds</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-step">Day 3 — Script Optimization</div>
+        <div class="timeline-title">Deferred 6 Render-Blocking Scripts</div>
+        <div class="timeline-desc">Added defer and async attributes to all non-critical JavaScript. Removed 3 unused Shopify apps that were injecting scripts on every page load even though they were only needed on 2 pages. Moved all scripts to bottom of body.</div>
+        <div class="timeline-result">✓ Time to First Byte improved by 2.8 seconds</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-step">Day 4 — Font Optimization</div>
+        <div class="timeline-title">Consolidated 6 Google Font Requests to 1</div>
+        <div class="timeline-desc">Store was loading 6 separate Google Fonts API calls. Consolidated into a single optimized request. Added font-display: swap to prevent invisible text during font load. Self-hosted the primary display font.</div>
+        <div class="timeline-result">✓ Eliminated 5 network round trips — saved 0.8 seconds</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-step">Day 5-7 — Final Tuning</div>
+        <div class="timeline-title">Preload, Cache Headers + Liquid Template Cleanup</div>
+        <div class="timeline-desc">Added resource preload hints for hero image and primary font. Cleaned up Liquid template files — removed 340 lines of unused CSS. Added browser cache headers. Minified all custom CSS and JS files.</div>
+        <div class="timeline-result">✓ Final score reached 91 — from starting score of 43</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Techniques -->
+  <div class="section-title" style="margin-bottom:8px;">Techniques Used</div>
+  <div class="section-sub" style="margin-bottom:32px;">Every optimization applied with its measured impact</div>
+  <div class="techniques-grid">
+    <div class="technique-card">
+      <div class="technique-icon">🖼️</div>
+      <div class="technique-title">WebP Image Conversion</div>
+      <div class="technique-desc">Converted all 94 product and hero images from PNG/JPEG to WebP using Shopify's img_url filter with format parameter. Added responsive srcset for 3 breakpoints.</div>
+      <span class="technique-saving">Saved 16.5MB</span>
+    </div>
+    <div class="technique-card">
+      <div class="technique-icon">⚡</div>
+      <div class="technique-title">Script Deferral</div>
+      <div class="technique-desc">Added defer attribute to all non-critical scripts. Removed 3 abandoned app scripts that were still loading. Moved inline scripts below fold content.</div>
+      <span class="technique-saving">-2.8s render time</span>
+    </div>
+    <div class="technique-card">
+      <div class="technique-icon">🔤</div>
+      <div class="technique-title">Font Optimization</div>
+      <div class="technique-desc">Reduced Google Fonts requests from 6 to 1. Added font-display: swap. Self-hosted primary display font to eliminate external dependency.</div>
+      <span class="technique-saving">-0.8s load time</span>
+    </div>
+    <div class="technique-card">
+      <div class="technique-icon">💤</div>
+      <div class="technique-title">Lazy Loading</div>
+      <div class="technique-desc">Added loading="lazy" to all below-fold images. Used IntersectionObserver for custom lazy-loaded sections. Hero image preloaded with &lt;link rel="preload"&gt;.</div>
+      <span class="technique-saving">-1.4s LCP</span>
+    </div>
+    <div class="technique-card">
+      <div class="technique-icon">🗑️</div>
+      <div class="technique-title">CSS Cleanup</div>
+      <div class="technique-desc">Removed 340 lines of unused CSS from theme files accumulated from previous developer edits and removed app styles that were never cleaned up.</div>
+      <span class="technique-saving">-180KB CSS</span>
+    </div>
+    <div class="technique-card">
+      <div class="technique-icon">📦</div>
+      <div class="technique-title">Browser Caching</div>
+      <div class="technique-desc">Configured cache-control headers for static assets. Shopify CDN already handles most caching but custom asset cache rules were added for theme files.</div>
+      <span class="technique-saving">+repeat visits</span>
+    </div>
+  </div>
+
+  <!-- Result Box -->
+  <div class="result-box">
+    <div class="result-box-title">Final Results — 30 Days Post-Launch</div>
+    <div class="result-box-sub">Measured against same 30-day period from previous year</div>
+    <div class="result-stats">
+      <div>
+        <div class="result-stat-num">+89%</div>
+        <div class="result-stat-label">Conversion Rate</div>
+      </div>
+      <div>
+        <div class="result-stat-num">-80%</div>
+        <div class="result-stat-label">Page Load Time</div>
+      </div>
+      <div>
+        <div class="result-stat-num">-49%</div>
+        <div class="result-stat-label">Bounce Rate</div>
+      </div>
+      <div>
+        <div class="result-stat-num">+48pts</div>
+        <div class="result-stat-label">PageSpeed Score</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page-footer">
+  <div>PageSpeed Case Study · March 2025</div>
+  <div>Fatai A. — eCommerce Developer · Shopify · WooCommerce · Wix</div>
+</div>
+
+</body>
+</html>
